@@ -22,7 +22,7 @@ class WorkLog(Base):
     __tablename__ = 'worklog'
 
     id = Column(Integer, primary_key=True)
-    activity = Column(Enum('start', 'stop', 'resume'))
+    activity = Column(Enum('start', 'end', 'resume'))
     description = Column(String(256)) # in case of start activity, this will be the activity name
     created_at = Column(DateTime(), default=datetime.now)
 

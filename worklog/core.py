@@ -23,7 +23,7 @@ class WorkLogApp(foundation.CementApp):
 
 def main():
     app = WorkLogApp()
-    handler.register(ctrl.StartController)
+    [handler.register(c) for c in ctrl.export]
     hook.register(name='cement_post_setup_hook')(init)
     app.setup()
     app.run()
