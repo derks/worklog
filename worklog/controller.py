@@ -40,7 +40,7 @@ class EndController(ActivityWriter):
         stacked_on = 'WorkLog'
         label = 'end'
         description = 'end last activity'
-        arguments = [(['args'], dict(type=str, nargs='+', metavar='description'))]
+        arguments = [(['args'], dict(type=str, nargs='*', metavar='description'))]
 
     @controller.expose(aliases=['e'])
     def default(self):
@@ -53,7 +53,7 @@ class ResumeController(ActivityWriter):
         stacked_on = 'WorkLog'
         label = 'resume'
         description = 'resume last activity'
-        arguments = [(['args'], dict(type=str, nargs='+', metavar='description'))]
+        arguments = [(['args'], dict(type=str, nargs='*', metavar='description'))]
 
     @controller.expose(aliases=['r'])
     def default(self):
