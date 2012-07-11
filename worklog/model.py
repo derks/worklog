@@ -26,8 +26,8 @@ class WorkLog(Base):
     description = Column(String(256)) # in case of start activity, this will be the activity name
     created_at = Column(DateTime(), default=datetime.now)
 
-    def __repr__(self):
-        return "<%s_%s_%s_%s>" % (self.__class__.__name__, self.id, self.attribute_id, self.value)
+    def __unicode__(self):
+        return "%s %s %s" % (self.created_at, self.activity.ljust(6), self.description)
 
 def init(app):
     app.log.debug(app.config.get('main', 'db'))

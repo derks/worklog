@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import logging
 from cement.core import foundation, controller, handler
 from .model import WorkLog
@@ -37,7 +38,7 @@ class StartController(ActivityWriter):
         description = 'start an activity'
         arguments = [(['args'], dict(metavar='activity', type=str, nargs='+'))]
 
-    @controller.expose(aliases=['s'], help="start activity")
+    @controller.expose(aliases=['s'])
     def default(self):
         self._activity()
 
@@ -49,7 +50,7 @@ class EndController(ActivityWriter):
         description = 'end last activity'
         arguments = [(['args'], dict(type=str, nargs='+', metavar='description'))]
 
-    @controller.expose(aliases=['e'], help="end activity")
+    @controller.expose(aliases=['e'])
     def default(self):
         self._activity()
 
@@ -62,8 +63,20 @@ class ResumeController(ActivityWriter):
         description = 'resume last activity'
         arguments = [(['args'], dict(type=str, nargs='+', metavar='description'))]
 
-    @controller.expose(aliases=['r'], help="resume activity")
+    @controller.expose(aliases=['r'])
     def default(self):
         self._activity()
 
-export = [StartController, EndController, ResumeController]
+class ListController(controller.CementBaseController):
+    class Meta:
+        interface = controller.IController
+        stacked_on = 'WorkLog'
+        label = 'list'
+        description = 'list log'
+        arguments = []
+
+    @controller.expose(aliases=['l'])
+    def default(self):
+        [print(unicode(i)) for i in self.app.session.query(WorkLog).all()]
+
+export = [StartController, EndController, ResumeController, ListController]
