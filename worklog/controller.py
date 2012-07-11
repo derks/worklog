@@ -3,6 +3,8 @@
 
 import logging
 from cement.core import foundation, controller, handler
+from .model import WorkLog
+
 log = logging.getLogger(__name__)
 
 class WorkLogController(controller.CementBaseController):
@@ -19,7 +21,6 @@ class WorkLogController(controller.CementBaseController):
         label = 'WorkLog'
         description = 'WorkLog entry point'
 
-
 class StartController(controller.CementBaseController):
     class Meta:
         interface = controller.IController
@@ -29,6 +30,9 @@ class StartController(controller.CementBaseController):
         arguments = [(['activity'], dict(type=str, nargs='+'))]
 
     @controller.expose(aliases=['s'], help="start activity")
-    def default(self, *args):
-        self.log.info(self.pargs.activity)
-
+    def default(self):
+        wl = WorkLog()
+        wl.activity = "start"
+        wl.description = " ".join(self.pargs.activity)
+        self.app.session.add(wl)
+        self.app.session.commit()
