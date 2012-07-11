@@ -21,6 +21,7 @@ setup(
         "setuptools",
         "sqlalchemy",
         "pyxdg",
+        "pysqlite",
     ],
 
     entry_points = {

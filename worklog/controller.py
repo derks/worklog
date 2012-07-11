@@ -10,15 +10,6 @@ from datetime import datetime, timedelta
 log = logging.getLogger(__name__)
 
 class WorkLogController(controller.CementBaseController):
-    """
-        commands:
-            start <activity>
-            end
-            resume
-            diff (since last entry)
-            pop (display last activity, time spent and archive those records) --keep (do not archive, only display)
-            maybe list (display activities)
-    """
     class Meta:
         label = 'WorkLog'
         description = 'WorkLog entry point'
