@@ -5,6 +5,7 @@ from __future__ import print_function
 import logging
 from cement.core import foundation, controller, handler
 from .model import WorkLog
+from datetime import datetime
 
 log = logging.getLogger(__name__)
 
@@ -79,4 +80,18 @@ class ListController(controller.CementBaseController):
     def default(self):
         [print(unicode(i)) for i in self.app.session.query(WorkLog).all()]
 
-export = [StartController, EndController, ResumeController, ListController]
+class DiffController(controller.CementBaseController):
+    class Meta:
+        interface = controller.IController
+        stacked_on = 'WorkLog'
+        label = 'diff'
+        description = 'diff now() since last log'
+        arguments = []
+
+    @controller.expose(aliases=['d'])
+    def default(self):
+        wl = self.app.session.query(WorkLog).order_by(WorkLog.created_at.desc()).limit(1).one()
+        print(unicode(wl))
+        print("diff: %s" % (datetime.now() - wl.created_at))
+
+export = [StartController, EndController, ResumeController, ListController, DiffController]
