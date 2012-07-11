@@ -93,12 +93,48 @@ class DiffController(controller.CementBaseController):
         stacked_on = 'WorkLog'
         label = 'diff'
         description = 'diff now() since last log'
-        arguments = []
+        arguments = [(['-f', '--full'], dict(action='store_true'))]
 
     @controller.expose(aliases=['d'])
     def default(self):
-        wl = self.app.session.query(WorkLog).order_by(WorkLog.created_at.desc()).limit(1).one()
-        display_diff([wl], datetime.now() - wl.created_at)
+        self.log.debug(self.pargs)
+        if self.pargs.full:
+            items, state = get_activity(self.app.session, self.log)
+            # FIXME: fix get_activity for this use-case so if the first record isnt END state, create it from now()
+            diff = state[2]
+        else:
+            wl = self.app.session.query(WorkLog).order_by(WorkLog.created_at.desc()).limit(1).one()
+            diff = datetime.now() - wl.created_at
+            items = [wl]
+
+        display_diff(items, diff)
+
+def get_activity(session, log):
+    q = session.query(WorkLog).order_by(WorkLog.created_at.desc()).all()
+
+    ALG_START=0
+    START='start'
+    END='end'
+    RESUME='resume'
+    states = {
+        # CURSTATE: NEXT_STATES, NEW_DIFFSUM_FN(cur diff sum, prev item, cur item)
+        ALG_START: ([END], lambda _, _1, _2: timedelta(0)),
+        END: ([START, RESUME], lambda s, p, i: s + (p.created_at - i.created_at)),
+        RESUME: ([END], lambda s, _, _1: s),
+    }
+
+    state = (ALG_START, None, None)
+    #       current state, prev item, diff sum
+    items = []
+    while not state[0] == START:
+        item = q.pop(0)
+        if item.activity not in states[state[0]][0]:
+            raise RuntimeError("invalid state")
+
+        state = (item.activity, item, states[state[0]][1](state[2], state[1], item))
+        log.debug("new state: (%s, %s, %s)" % state)
+        items.insert(0, item)
+    return items, state
 
 class PopController(controller.CementBaseController):
     class Meta:
@@ -110,31 +146,7 @@ class PopController(controller.CementBaseController):
 
     @controller.expose(aliases=['p'])
     def default(self):
-        q = self.app.session.query(WorkLog).order_by(WorkLog.created_at.desc()).all()
-
-        ALG_START=0
-        START='start'
-        END='end'
-        RESUME='resume'
-        states = {
-            # CURSTATE: NEXT_STATES, NEW_DIFFSUM_FN(cur diff sum, prev item, cur item)
-            ALG_START: ([END], lambda _, _1, _2: timedelta(0)),
-            END: ([START, RESUME], lambda s, p, i: s + (p.created_at - i.created_at)),
-            RESUME: ([END], lambda s, _, _1: s),
-        }
-
-        state = (ALG_START, None, None)
-        #       current state, prev item, diff sum
-        items = []
-        while not state[0] == START:
-            item = q.pop(0)
-            if item.activity not in states[state[0]][0]:
-                raise RuntimeError("invalid state")
-
-            state = (item.activity, item, states[state[0]][1](state[2], state[1], item))
-            self.log.debug("new state: (%s, %s, %s)" % state)
-            items.insert(0, item)
-
+        items, state = get_activity(self.app.session, log)
         display_diff(items, state[2])
 
 export = [StartController, EndController, ResumeController, ListController, DiffController, PopController]
