@@ -24,5 +24,5 @@ setup(
     ],
 
     entry_points = {
-        'console_scripts': ['wl = worklog:main']},
+        'console_scripts': ['wl = worklog.core:main']},
 )
