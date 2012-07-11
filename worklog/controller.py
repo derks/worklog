@@ -148,5 +148,7 @@ class PopController(controller.CementBaseController):
     def default(self):
         items, state = get_activity(self.app.session, log)
         display_diff(items, state[2])
+        [self.app.session.delete(i) for i in items]
+        self.app.session.commit()
 
 export = [StartController, EndController, ResumeController, ListController, DiffController, PopController]
