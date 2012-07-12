@@ -25,7 +25,6 @@ class ActivityWriter(controller.CementBaseController):
 class StartController(ActivityWriter):
     class Meta:
         interface = controller.IController
-        stacked_on = 'WorkLog'
         label = 'start'
         description = 'start an activity'
         arguments = [(['args'], dict(metavar='activity', type=str, nargs='+'))]
@@ -37,7 +36,6 @@ class StartController(ActivityWriter):
 class EndController(ActivityWriter):
     class Meta:
         interface = controller.IController
-        stacked_on = 'WorkLog'
         label = 'end'
         description = 'end last activity'
         arguments = [(['args'], dict(type=str, nargs='*', metavar='description'))]
@@ -50,7 +48,6 @@ class EndController(ActivityWriter):
 class ResumeController(ActivityWriter):
     class Meta:
         interface = controller.IController
-        stacked_on = 'WorkLog'
         label = 'resume'
         description = 'resume last activity'
         arguments = [(['args'], dict(type=str, nargs='*', metavar='description'))]
@@ -69,7 +66,6 @@ def display_diff(items, diff):
 class ListController(controller.CementBaseController):
     class Meta:
         interface = controller.IController
-        stacked_on = 'WorkLog'
         label = 'list'
         description = 'list log'
         arguments = []
@@ -81,7 +77,6 @@ class ListController(controller.CementBaseController):
 class DiffController(controller.CementBaseController):
     class Meta:
         interface = controller.IController
-        stacked_on = 'WorkLog'
         label = 'diff'
         description = 'diff now() since last log'
         arguments = [(['-f', '--full'], dict(action='store_true'))]
@@ -130,7 +125,6 @@ def get_activity(session, log):
 class PopController(controller.CementBaseController):
     class Meta:
         interface = controller.IController
-        stacked_on = 'WorkLog'
         label = 'pop'
         description = 'diff now() since last log'
         arguments = []
