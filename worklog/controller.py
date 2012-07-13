@@ -28,8 +28,9 @@ class StartController(ActivityWriter):
         label = 'start'
         description = 'start an activity'
         arguments = [(['args'], dict(metavar='activity', type=str, nargs='+'))]
+        aliases= ['s']
 
-    @controller.expose(aliases=['s'])
+    @controller.expose()
     def default(self):
         self._activity()
 
@@ -39,8 +40,9 @@ class EndController(ActivityWriter):
         label = 'end'
         description = 'end last activity'
         arguments = [(['args'], dict(type=str, nargs='*', metavar='description'))]
+        aliases=['e']
 
-    @controller.expose(aliases=['e'])
+    @controller.expose()
     def default(self):
         self._activity()
 
@@ -51,8 +53,9 @@ class ResumeController(ActivityWriter):
         label = 'resume'
         description = 'resume last activity'
         arguments = [(['args'], dict(type=str, nargs='*', metavar='description'))]
+        aliases=['r']
 
-    @controller.expose(aliases=['r'])
+    @controller.expose()
     def default(self):
         self._activity()
 
@@ -69,8 +72,9 @@ class ListController(controller.CementBaseController):
         label = 'list'
         description = 'list log'
         arguments = []
+        aliases=['l']
 
-    @controller.expose(aliases=['l'])
+    @controller.expose()
     def default(self):
         display(self.app.session.query(WorkLog).all())
 
@@ -80,8 +84,9 @@ class DiffController(controller.CementBaseController):
         label = 'diff'
         description = 'diff now() since last log'
         arguments = [(['-f', '--full'], dict(action='store_true'))]
+        aliases=['d']
 
-    @controller.expose(aliases=['d'])
+    @controller.expose()
     def default(self):
         self.log.debug(self.pargs)
         if self.pargs.full:
@@ -128,8 +133,9 @@ class PopController(controller.CementBaseController):
         label = 'pop'
         description = 'diff now() since last log'
         arguments = []
+        aliases=['p']
 
-    @controller.expose(aliases=['p'])
+    @controller.expose()
     def default(self):
         items, state = get_activity(self.app.session, log)
         display_diff(items, state[2])

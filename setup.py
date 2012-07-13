@@ -17,7 +17,7 @@ setup(
     ),
 
     install_requires = [
-        "cement",
+        "cement", # aliases will need probably like >1.9.12 which hasnt been released yet
         "setuptools",
         "sqlalchemy",
         "pyxdg",
